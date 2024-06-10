@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (productCode && supplier && productName && quantity && expiryDate) {
             const product = {
-                productCode,
+                productCode, 
                 supplier,
                 productName,
                 quantity,
