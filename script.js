@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('productForm');
-    const expiryList = document.getElementById('expiryList');
+    const productTable = document.getElementById('productTable').getElementsByTagName('tbody')[0];
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -10,19 +10,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const productName = document.getElementById('productName').value.trim();
         const quantity = document.getElementById('quantity').value.trim();
         const expiryDate = document.getElementById('expiryDate').value;
+        const returnable = document.getElementById('returnable').value;
+        const returnConditions = document.getElementById('returnConditions').value.trim();
 
-        if (productCode && supplier && productName && quantity && expiryDate) {
+        if (productCode && supplier && productName && quantity && expiryDate && returnable && returnConditions) {
             const product = {
-                productCode, 
+                productCode,
                 supplier,
                 productName,
                 quantity,
-                expiryDate
+                expiryDate,
+                returnable,
+                returnConditions
             };
 
             if (!isProductInDatabase(productCode)) {
                 addProductToDatabase(product);
-                displayProductExpiry(product);
+                displayProductInTable(product);
                 form.reset();
             } else {
                 alert('El producto ya existe en la base de datos.');
@@ -52,29 +56,34 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('products', JSON.stringify(products));
     }
 
-    function displayProductExpiry(product) {
+    function displayProductInTable(product) {
         const expiryDate = new Date(product.expiryDate);
         const today = new Date();
         const timeDiff = expiryDate - today;
         const daysToExpiry = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-        const li = document.createElement('li');
-        li.textContent = `${product.productName} - ${daysToExpiry} días para caducar`;
+        const row = productTable.insertRow();
+        row.insertCell(0).textContent = product.productCode;
+        row.insertCell(1).textContent = product.supplier;
+        row.insertCell(2).textContent = product.productName;
+        row.insertCell(3).textContent = product.quantity;
+        row.insertCell(4).textContent = product.expiryDate;
+        row.insertCell(5).textContent = daysToExpiry;
+        row.insertCell(6).textContent = product.returnable;
+        row.insertCell(7).textContent = product.returnConditions;
 
         if (daysToExpiry <= 7) {
-            li.classList.add('urgent');
+            row.classList.add('urgent');
         } else if (daysToExpiry <= 14) {
-            li.classList.add('danger');
+            row.classList.add('danger');
         } else if (daysToExpiry <= 30) {
-            li.classList.add('warning');
+            row.classList.add('warning');
         }
-
-        expiryList.appendChild(li);
     }
 
     function displayAllProducts() {
         const products = loadDatabase();
-        products.forEach(displayProductExpiry);
+        products.forEach(displayProductInTable);
     }
 
     displayAllProducts();
