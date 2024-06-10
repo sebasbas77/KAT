@@ -72,6 +72,15 @@ document.addEventListener('DOMContentLoaded', function() {
         row.insertCell(6).textContent = product.returnable;
         row.insertCell(7).textContent = product.returnConditions;
 
+        const actionsCell = row.insertCell(8);
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Eliminar';
+        deleteButton.addEventListener('click', function() {
+            deleteProductFromDatabase(product.productCode);
+            productTable.deleteRow(row.rowIndex - 1);
+        });
+        actionsCell.appendChild(deleteButton);
+
         if (daysToExpiry <= 7) {
             row.classList.add('urgent');
         } else if (daysToExpiry <= 14) {
@@ -81,10 +90,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function deleteProductFromDatabase(productCode) {
+        let products = loadDatabase();
+        products = products.filter(product => product.productCode !== productCode);
+        saveDatabase(products);
+    }
+
     function displayAllProducts() {
         const products = loadDatabase();
         products.forEach(displayProductInTable);
     }
 
+    document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function(event) {
+            const column = event.target.dataset.column;
+            const isChecked = event.target.checked;
+            toggleColumnVisibility(column, isChecked);
+        });
+    });
+
+    function toggleColumnVisibility(columnIndex, isVisible) {
+        const table = document.getElementById('productTable');
+        const rows = table.rows;
+        for (let row of rows) {
+            const cell = row.cells[columnIndex];
+            if (cell) {
+                cell.style.display = isVisible ? '' : 'none';
+            }
+        }
+    }
+
     displayAllProducts();
+
+    // Set initial column visibility based on checkbox state
+    document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+        const column = checkbox.dataset.column;
+        const isChecked = checkbox.checked;
+        toggleColumnVisibility(column, isChecked);
+    });
 });
