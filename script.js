@@ -1,47 +1,81 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const video = document.getElementById('camera');
-    const captureButton = document.getElementById('capture');
-    const canvas = document.getElementById('snapshot');
-    const imagePreview = document.getElementById('imagePreview');
-    const result = document.getElementById('result');
-    const context = canvas.getContext('2d');
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('productForm');
+    const expiryList = document.getElementById('expiryList');
 
-    // Get the rear camera
-    navigator.mediaDevices.enumerateDevices().then(devices => {
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        const rearCamera = videoDevices.find(device => device.label.toLowerCase().includes('back')) || videoDevices[0];
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-        navigator.mediaDevices.getUserMedia({
-            video: { deviceId: rearCamera.deviceId }
-        })
-        .then(stream => {
-            video.srcObject = stream;
-        })
-        .catch(err => {
-            console.error("Error accessing camera: ", err);
-        });
+        const productCode = document.getElementById('productCode').value.trim();
+        const supplier = document.getElementById('supplier').value.trim();
+        const productName = document.getElementById('productName').value.trim();
+        const quantity = document.getElementById('quantity').value.trim();
+        const expiryDate = document.getElementById('expiryDate').value;
+
+        if (productCode && supplier && productName && quantity && expiryDate) {
+            const product = {
+                productCode,
+                supplier,
+                productName,
+                quantity,
+                expiryDate
+            };
+
+            if (!isProductInDatabase(productCode)) {
+                addProductToDatabase(product);
+                displayProductExpiry(product);
+                form.reset();
+            } else {
+                alert('El producto ya existe en la base de datos.');
+            }
+        } else {
+            alert('Por favor, complete todos los campos.');
+        }
     });
 
-    captureButton.addEventListener('click', () => {
-        // Draw the video frame to the canvas
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    function isProductInDatabase(productCode) {
+        const products = loadDatabase();
+        return products.some(product => product.productCode === productCode);
+    }
 
-        // Convert the canvas image to a data URL and display it
-        const dataUrl = canvas.toDataURL('image/png');
-        const img = document.createElement('img');
-        img.src = dataUrl;
-        imagePreview.innerHTML = '';
-        imagePreview.appendChild(img);
+    function addProductToDatabase(product) {
+        const products = loadDatabase();
+        products.push(product);
+        saveDatabase(products);
+    }
 
-        // Extract the text from the canvas image
-        Tesseract.recognize(canvas, 'eng', {
-            logger: m => console.log(m)
-        }).then(({ data: { text } }) => {
-            result.textContent = text;
-        }).catch(err => {
-            console.error("Error recognizing text: ", err);
-        });
-    });
+    function loadDatabase() {
+        const data = localStorage.getItem('products');
+        return data ? JSON.parse(data) : [];
+    }
+
+    function saveDatabase(products) {
+        localStorage.setItem('products', JSON.stringify(products));
+    }
+
+    function displayProductExpiry(product) {
+        const expiryDate = new Date(product.expiryDate);
+        const today = new Date();
+        const timeDiff = expiryDate - today;
+        const daysToExpiry = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+        const li = document.createElement('li');
+        li.textContent = `${product.productName} - ${daysToExpiry} días para caducar`;
+
+        if (daysToExpiry <= 7) {
+            li.classList.add('urgent');
+        } else if (daysToExpiry <= 14) {
+            li.classList.add('danger');
+        } else if (daysToExpiry <= 30) {
+            li.classList.add('warning');
+        }
+
+        expiryList.appendChild(li);
+    }
+
+    function displayAllProducts() {
+        const products = loadDatabase();
+        products.forEach(displayProductExpiry);
+    }
+
+    displayAllProducts();
 });
