@@ -20,11 +20,17 @@ h1, h2 {
 form {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
 }
 
 .form-row {
-    flex: 1 1 48%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.form-group {
+    flex: 1 1 30%;
     display: flex;
     flex-direction: column;
     margin: 10px;
@@ -49,12 +55,22 @@ button {
     color: white;
     border: none;
     cursor: pointer;
-    margin: 10px;
-    flex: 1 1 100%;
+    margin: 10px auto;
+    display: block;
+    width: 100%;
 }
 
 button:hover {
     background: #0056b3;
+}
+
+.table-controls {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.table-controls label {
+    margin-right: 10px;
 }
 
 table {
