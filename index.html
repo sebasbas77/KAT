@@ -3,21 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Text Extractor</title>
+    <title>Inventario de Productos</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Photo Text Extractor</h1>
-        <div class="camera-container">
-            <video id="camera" autoplay></video>
-            <button id="capture">Capture Photo</button>
-        </div>
-        <canvas id="snapshot" style="display:none;"></canvas>
-        <div class="image-preview" id="imagePreview"></div>
-        <div id="result"></div>
+        <h1>Inventario de Productos</h1>
+        <form id="productForm">
+            <label for="productCode">Código de Producto:</label>
+            <input type="text" id="productCode" required>
+            
+            <label for="supplier">Proveedor:</label>
+            <input type="text" id="supplier" required>
+            
+            <label for="productName">Nombre del Producto:</label>
+            <input type="text" id="productName" required>
+            
+            <label for="quantity">Cantidad:</label>
+            <input type="number" id="quantity" required>
+            
+            <label for="expiryDate">Fecha de Caducidad:</label>
+            <input type="date" id="expiryDate" required>
+            
+            <button type="submit">Agregar Producto</button>
+        </form>
+        <h2>Productos Próximos a Caducar</h2>
+        <ul id="expiryList"></ul>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
