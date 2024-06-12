@@ -1,100 +1,54 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+document.getElementById('productForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const codigo = document.getElementById('codigo').value;
+    const producto = document.getElementById('producto').value;
+    const proveedor = document.getElementById('proveedor').value;
+    const cantidad = document.getElementById('cantidad').value;
+    const fecha = document.getElementById('fecha').value;
+    const devolucion = document.getElementById('devolucion').value;
+    const condiciones = document.getElementById('condiciones').value;
+
+    const table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+
+    const today = new Date();
+    const expirationDate = new Date(fecha);
+    const timeDiff = expirationDate - today;
+    const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    newRow.classList.add(getRowClass(daysLeft));
+
+    newRow.innerHTML = `
+        <td>${codigo}</td>
+        <td>${producto}</td>
+        <td>${daysLeft}</td>
+    `;
+
+    newRow.addEventListener('click', function() {
+        document.getElementById('detailCodigo').innerText = codigo;
+        document.getElementById('detailProducto').innerText = producto;
+        document.getElementById('detailProveedor').innerText = proveedor;
+        document.getElementById('detailCantidad').innerText = cantidad;
+        document.getElementById('detailFecha').innerText = fecha;
+        document.getElementById('detailDevolucion').innerText = devolucion;
+        document.getElementById('detailCondiciones').innerText = condiciones;
+
+        document.getElementById('productDetails').style.display = 'block';
+    });
+
+    document.getElementById('productForm').reset();
+});
+
+function getRowClass(daysLeft) {
+    if (daysLeft <= 0) {
+        return 'red';
+    } else if (daysLeft <= 7) {
+        return 'orange';
+    } else if (daysLeft <= 30) {
+        return 'yellow';
+    } else {
+        return '';
+    }
 }
 
-.container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2 {
-    text-align: center;
-}
-
-form {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.form-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.form-group {
-    flex: 1 1 30%;
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
-}
-
-label {
-    margin-bottom: 5px;
-    font-size: 0.9em;
-}
-
-input, select {
-    padding: 5px;
-    margin-bottom: 10px;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 0.9em;
-}
-
-button {
-    padding: 10px;
-    background: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin: 10px auto;
-    display: block;
-    width: 100%;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-.table-controls {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.table-controls label {
-    margin-right: 10px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-    font-size: 0.9em;
-}
-
-.warning {
-    background-color: yellow;
-}
-
-.danger {
-    background-color: orange;
-}
-
-.urgent {
-    background-color: red;
-    color: white;
-}
