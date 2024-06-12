@@ -150,6 +150,7 @@
                 <th>Código</th>
                 <th>Producto</th>
                 <th>Días Restantes</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -168,52 +169,83 @@
     </div>
 
     <script>
-        document.getElementById('productForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
 
-            const codigo = document.getElementById('codigo').value;
-            const producto = document.getElementById('producto').value;
-            const proveedor = document.getElementById('proveedor').value;
-            const cantidad = document.getElementById('cantidad').value;
-            const fecha = document.getElementById('fecha').value;
-            const devolucion = document.getElementById('devolucion').value;
-            const condiciones = document.getElementById('condiciones').value;
+            document.getElementById('productForm').addEventListener('submit', function(event) {
+                event.preventDefault();
 
+                const codigo = document.getElementById('codigo').value;
+                const producto = document.getElementById('producto').value;
+                const proveedor = document.getElementById('proveedor').value;
+                const cantidad = document.getElementById('cantidad').value;
+                const fecha = document.getElementById('fecha').value;
+                const devolucion = document.getElementById('devolucion').value;
+                const condiciones = document.getElementById('condiciones').value;
+
+                const product = { codigo, producto, proveedor, cantidad, fecha, devolucion, condiciones };
+
+                addProductToTable(product);
+                saveProduct(product);
+
+                document.getElementById('productForm').reset();
+            });
+        });
+
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            products.forEach(product => addProductToTable(product));
+        }
+
+        function saveProduct(product) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            products.push(product);
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        function deleteProduct(codigo) {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            products = products.filter(product => product.codigo !== codigo);
+            localStorage.setItem('products', JSON.stringify(products));
+            document.getElementById('productTable').getElementsByTagName('tbody')[0].innerHTML = '';
+            loadProducts();
+        }
+
+        function addProductToTable(product) {
             const table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
             const newRow = table.insertRow();
 
             const today = new Date();
-            const expirationDate = new Date(fecha);
+            const expirationDate = new Date(product.fecha);
             const timeDiff = expirationDate - today;
             const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
             newRow.classList.add(getRowClass(daysLeft));
 
             newRow.innerHTML = `
-                <td>${codigo}</td>
-                <td>${producto}</td>
+                <td>${product.codigo}</td>
+                <td>${product.producto}</td>
                 <td>${daysLeft}</td>
+                <td><button onclick="deleteProduct('${product.codigo}')">Eliminar</button></td>
             `;
 
             newRow.addEventListener('click', function() {
                 const details = document.getElementById('productDetails');
                 if (details.style.display === 'none' || details.style.display === '') {
-                    document.getElementById('detailCodigo').innerText = codigo;
-                    document.getElementById('detailProducto').innerText = producto;
-                    document.getElementById('detailProveedor').innerText = proveedor;
-                    document.getElementById('detailCantidad').innerText = cantidad;
-                    document.getElementById('detailFecha').innerText = fecha;
-                    document.getElementById('detailDevolucion').innerText = devolucion;
-                    document.getElementById('detailCondiciones').innerText = condiciones;
+                    document.getElementById('detailCodigo').innerText = product.codigo;
+                    document.getElementById('detailProducto').innerText = product.producto;
+                    document.getElementById('detailProveedor').innerText = product.proveedor;
+                    document.getElementById('detailCantidad').innerText = product.cantidad;
+                    document.getElementById('detailFecha').innerText = product.fecha;
+                    document.getElementById('detailDevolucion').innerText = product.devolucion;
+                    document.getElementById('detailCondiciones').innerText = product.condiciones;
 
                     details.style.display = 'block';
                 } else {
                     details.style.display = 'none';
                 }
             });
-
-            document.getElementById('productForm').reset();
-        });
+        }
 
         function getRowClass(daysLeft) {
             if (daysLeft <= 0) {
