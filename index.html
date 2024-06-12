@@ -83,16 +83,11 @@
         }
 
         .delete-btn {
-            background-color: #e74c3c;
+            background-color: #f44336;
             color: white;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
-            font-size: 12px;
-        }
-
-        .delete-btn:hover {
-            background-color: #c0392b;
         }
 
         #productDetails {
@@ -183,8 +178,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            loadProducts();
-            console.log("Products loaded from local storage.");
+            loadProductsFromLocalStorage();
         });
 
         document.getElementById('productForm').addEventListener('submit', function(event) {
@@ -198,7 +192,7 @@
             const devolucion = document.getElementById('devolucion').value;
             const condiciones = document.getElementById('condiciones').value;
 
-            const product = {
+            const newProduct = {
                 codigo,
                 producto,
                 proveedor,
@@ -208,44 +202,10 @@
                 condiciones
             };
 
-            addProductToTable(product);
-            saveProduct(product);
-
+            saveProductToLocalStorage(newProduct);
+            addProductToTable(newProduct);
             document.getElementById('productForm').reset();
-            console.log("Product added and saved to local storage.");
         });
-
-        function getRowClass(daysLeft) {
-            if (daysLeft <= 0) {
-                return 'red';
-            } else if (daysLeft <= 7) {
-                return 'orange';
-            } else if (daysLeft <= 30) {
-                return 'yellow';
-            } else {
-                return '';
-            }
-        }
-
-        function loadProducts() {
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            products.forEach(product => addProductToTable(product));
-        }
-
-        function saveProduct(product) {
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            products.push(product);
-            localStorage.setItem('products', JSON.stringify(products));
-        }
-
-        function deleteProduct(codigo) {
-            let products = JSON.parse(localStorage.getItem('products')) || [];
-            products = products.filter(product => product.codigo !== codigo);
-            localStorage.setItem('products', JSON.stringify(products));
-            document.getElementById('productTable').getElementsByTagName('tbody')[0].innerHTML = '';
-            loadProducts();
-            console.log(`Product with code ${codigo} deleted from local storage.`);
-        }
 
         function addProductToTable(product) {
             const table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
@@ -262,9 +222,7 @@
                 <td>${product.codigo}</td>
                 <td>${product.producto}</td>
                 <td>${daysLeft}</td>
-                <td>
-                    <button class="delete-btn" onclick="deleteProduct('${product.codigo}')">Eliminar</button>
-                </td>
+                <td><button class="delete-btn" onclick="deleteProduct(this, '${product.codigo}')">Eliminar</button></td>
             `;
 
             newRow.addEventListener('click', function() {
@@ -283,6 +241,38 @@
                     details.style.display = 'none';
                 }
             });
+        }
+
+        function getRowClass(daysLeft) {
+            if (daysLeft <= 0) {
+                return 'red';
+            } else if (daysLeft <= 7) {
+                return 'orange';
+            } else if (daysLeft <= 30) {
+                return 'yellow';
+            } else {
+                return '';
+            }
+        }
+
+        function saveProductToLocalStorage(product) {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            products.push(product);
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        function loadProductsFromLocalStorage() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            products.forEach(product => addProductToTable(product));
+        }
+
+        function deleteProduct(button, codigo) {
+            const row = button.closest('tr');
+            row.remove();
+
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            products = products.filter(product => product.codigo !== codigo);
+            localStorage.setItem('products', JSON.stringify(products));
         }
     </script>
 </body>
