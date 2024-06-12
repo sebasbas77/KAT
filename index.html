@@ -13,23 +13,29 @@
 
         form {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
 
         form label {
             font-weight: bold;
+            width: 100%;
         }
 
         form input, form select, form textarea {
-            width: 100%;
+            flex: 1 1 calc(50% - 20px);
             padding: 8px;
             box-sizing: border-box;
             font-size: 16px;
         }
 
+        form textarea {
+            flex: 1 1 100%;
+        }
+
         button {
+            flex: 1 1 100%;
             padding: 10px;
             font-size: 16px;
             background-color: #4CAF50;
@@ -72,6 +78,7 @@
         }
 
         #productDetails {
+            display: none;
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ddd;
@@ -98,28 +105,28 @@
     <h1>Control de Caducidad de Productos</h1>
     <form id="productForm">
         <label for="codigo">Código:</label>
-        <input type="text" id="codigo" name="codigo" required><br>
+        <input type="text" id="codigo" name="codigo" required>
         
         <label for="producto">Producto:</label>
-        <input type="text" id="producto" name="producto" required><br>
+        <input type="text" id="producto" name="producto" required>
         
         <label for="proveedor">Proveedor:</label>
-        <input type="text" id="proveedor" name="proveedor" required><br>
+        <input type="text" id="proveedor" name="proveedor" required>
         
         <label for="cantidad">Cantidad:</label>
-        <input type="number" id="cantidad" name="cantidad" required><br>
+        <input type="number" id="cantidad" name="cantidad" required>
         
         <label for="fecha">Fecha de Caducidad:</label>
-        <input type="date" id="fecha" name="fecha" required><br>
+        <input type="date" id="fecha" name="fecha" required>
         
         <label for="devolucion">Devolución:</label>
         <select id="devolucion" name="devolucion" required>
             <option value="si">Sí</option>
             <option value="no">No</option>
-        </select><br>
+        </select>
         
         <label for="condiciones">Condiciones:</label>
-        <textarea id="condiciones" name="condiciones" required></textarea><br>
+        <textarea id="condiciones" name="condiciones" required></textarea>
         
         <button type="submit">Agregar Producto</button>
     </form>
@@ -137,7 +144,7 @@
         </tbody>
     </table>
 
-    <div id="productDetails" style="display: none;">
+    <div id="productDetails">
         <h2>Detalles del Producto</h2>
         <p><strong>Código:</strong> <span id="detailCodigo"></span></p>
         <p><strong>Producto:</strong> <span id="detailProducto"></span></p>
@@ -177,15 +184,20 @@
             `;
 
             newRow.addEventListener('click', function() {
-                document.getElementById('detailCodigo').innerText = codigo;
-                document.getElementById('detailProducto').innerText = producto;
-                document.getElementById('detailProveedor').innerText = proveedor;
-                document.getElementById('detailCantidad').innerText = cantidad;
-                document.getElementById('detailFecha').innerText = fecha;
-                document.getElementById('detailDevolucion').innerText = devolucion;
-                document.getElementById('detailCondiciones').innerText = condiciones;
+                const details = document.getElementById('productDetails');
+                if (details.style.display === 'none' || details.style.display === '') {
+                    document.getElementById('detailCodigo').innerText = codigo;
+                    document.getElementById('detailProducto').innerText = producto;
+                    document.getElementById('detailProveedor').innerText = proveedor;
+                    document.getElementById('detailCantidad').innerText = cantidad;
+                    document.getElementById('detailFecha').innerText = fecha;
+                    document.getElementById('detailDevolucion').innerText = devolucion;
+                    document.getElementById('detailCondiciones').innerText = condiciones;
 
-                document.getElementById('productDetails').style.display = 'block';
+                    details.style.display = 'block';
+                } else {
+                    details.style.display = 'none';
+                }
             });
 
             document.getElementById('productForm').reset();
