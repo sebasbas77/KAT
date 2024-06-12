@@ -44,18 +44,12 @@
     </form>
 
     <h2>Productos</h2>
-    <table id="productTable">
-        <thead>
-            <tr>
-                <th>Código</th>
-                <th>Producto</th>
-                <th>Días Restantes</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+    <div id="productTableContainer">
+        <table id="productTable">
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
     <div id="productDetails">
         <h2>Detalles del Producto</h2>
@@ -66,6 +60,7 @@
         <p><strong>Fecha de Caducidad:</strong> <span id="detailFecha"></span></p>
         <p><strong>Devolución:</strong> <span id="detailDevolucion"></span></p>
         <p><strong>Condiciones:</strong> <span id="detailCondiciones"></span></p>
+        <button class="delete-btn" onclick="deleteProductDetails()">Eliminar Producto</button>
     </div>
 
     <script src="script.js"></script>
