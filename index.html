@@ -82,6 +82,19 @@
             background-color: #ff9999;
         }
 
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
         #productDetails {
             display: none;
             margin-top: 20px;
@@ -169,28 +182,46 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProducts();
+        document.addEventListener('DOMContentLoaded', loadProducts);
 
-            document.getElementById('productForm').addEventListener('submit', function(event) {
-                event.preventDefault();
+        document.getElementById('productForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-                const codigo = document.getElementById('codigo').value;
-                const producto = document.getElementById('producto').value;
-                const proveedor = document.getElementById('proveedor').value;
-                const cantidad = document.getElementById('cantidad').value;
-                const fecha = document.getElementById('fecha').value;
-                const devolucion = document.getElementById('devolucion').value;
-                const condiciones = document.getElementById('condiciones').value;
+            const codigo = document.getElementById('codigo').value;
+            const producto = document.getElementById('producto').value;
+            const proveedor = document.getElementById('proveedor').value;
+            const cantidad = document.getElementById('cantidad').value;
+            const fecha = document.getElementById('fecha').value;
+            const devolucion = document.getElementById('devolucion').value;
+            const condiciones = document.getElementById('condiciones').value;
 
-                const product = { codigo, producto, proveedor, cantidad, fecha, devolucion, condiciones };
+            const product = {
+                codigo,
+                producto,
+                proveedor,
+                cantidad,
+                fecha,
+                devolucion,
+                condiciones
+            };
 
-                addProductToTable(product);
-                saveProduct(product);
+            addProductToTable(product);
+            saveProduct(product);
 
-                document.getElementById('productForm').reset();
-            });
+            document.getElementById('productForm').reset();
         });
+
+        function getRowClass(daysLeft) {
+            if (daysLeft <= 0) {
+                return 'red';
+            } else if (daysLeft <= 7) {
+                return 'orange';
+            } else if (daysLeft <= 30) {
+                return 'yellow';
+            } else {
+                return '';
+            }
+        }
 
         function loadProducts() {
             const products = JSON.parse(localStorage.getItem('products')) || [];
@@ -226,7 +257,9 @@
                 <td>${product.codigo}</td>
                 <td>${product.producto}</td>
                 <td>${daysLeft}</td>
-                <td><button onclick="deleteProduct('${product.codigo}')">Eliminar</button></td>
+                <td>
+                    <button class="delete-btn" onclick="deleteProduct('${product.codigo}')">Eliminar</button>
+                </td>
             `;
 
             newRow.addEventListener('click', function() {
@@ -245,18 +278,6 @@
                     details.style.display = 'none';
                 }
             });
-        }
-
-        function getRowClass(daysLeft) {
-            if (daysLeft <= 0) {
-                return 'red';
-            } else if (daysLeft <= 7) {
-                return 'orange';
-            } else if (daysLeft <= 30) {
-                return 'yellow';
-            } else {
-                return '';
-            }
         }
     </script>
 </body>
