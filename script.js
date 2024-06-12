@@ -47,19 +47,10 @@ function addProductToTable(product) {
     `;
 
     newRow.addEventListener('click', function() {
-        const details = document.getElementById('productDetails');
-        if (details.style.display === 'none' || details.style.display === '') {
-            document.getElementById('detailCodigo').innerText = product.codigo;
-            document.getElementById('detailProducto').innerText = product.producto;
-            document.getElementById('detailProveedor').innerText = product.proveedor;
-            document.getElementById('detailCantidad').innerText = product.cantidad;
-            document.getElementById('detailFecha').innerText = product.fecha;
-            document.getElementById('detailDevolucion').innerText = product.devolucion;
-            document.getElementById('detailCondiciones').innerText = product.condiciones;
-
-            details.style.display = 'block';
+        if (document.getElementById('productDetails').style.display === 'block' && document.getElementById('detailCodigo').innerText === product.codigo) {
+            showAllProducts();
         } else {
-            details.style.display = 'none';
+            showProductDetails(product);
         }
     });
 }
@@ -95,3 +86,36 @@ function deleteProduct(button, codigo) {
     products = products.filter(product => product.codigo !== codigo);
     localStorage.setItem('products', JSON.stringify(products));
 }
+
+function showProductDetails(product) {
+    const details = document.getElementById('productDetails');
+    document.getElementById('detailCodigo').innerText = product.codigo;
+    document.getElementById('detailProducto').innerText = product.producto;
+    document.getElementById('detailProveedor').innerText = product.proveedor;
+    document.getElementById('detailCantidad').innerText = product.cantidad;
+    document.getElementById('detailFecha').innerText = product.fecha;
+    document.getElementById('detailDevolucion').innerText = product.devolucion;
+    document.getElementById('detailCondiciones').innerText = product.condiciones;
+
+    details.style.display = 'block';
+    hideAllProductsExcept(product.codigo);
+}
+
+function hideAllProductsExcept(codigo) {
+    const rows = document.querySelectorAll('#productTable tbody tr');
+    rows.forEach(row => {
+        const rowCodigo = row.cells[0].innerText;
+        if (rowCodigo !== codigo) {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function showAllProducts() {
+    const rows = document.querySelectorAll('#productTable tbody tr');
+    rows.forEach(row => {
+        row.style.display = '';
+    });
+    document.getElementById('productDetails').style.display = 'none';
+}
+
