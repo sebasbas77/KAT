@@ -1,131 +1,88 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('productForm');
-    const productTable = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 10px;
+}
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
-        const productCode = document.getElementById('productCode').value.trim();
-        const supplier = document.getElementById('supplier').value.trim();
-        const productName = document.getElementById('productName').value.trim();
-        const quantity = document.getElementById('quantity').value.trim();
-        const expiryDate = document.getElementById('expiryDate').value;
-        const returnable = document.getElementById('returnable').value;
-        const returnConditions = document.getElementById('returnConditions').value.trim();
+form label {
+    font-weight: bold;
+}
 
-        if (productCode && supplier && productName && quantity && expiryDate && returnable && returnConditions) {
-            const product = {
-                productCode,
-                supplier,
-                productName,
-                quantity,
-                expiryDate,
-                returnable,
-                returnConditions
-            };
+form input, form select, form textarea {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
 
-            if (!isProductInDatabase(productCode)) {
-                addProductToDatabase(product);
-                displayProductInTable(product);
-                form.reset();
-            } else {
-                alert('El producto ya existe en la base de datos.');
-            }
-        } else {
-            alert('Por favor, complete todos los campos.');
-        }
-    });
+button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
 
-    function isProductInDatabase(productCode) {
-        const products = loadDatabase();
-        return products.some(product => product.productCode === productCode);
+button:hover {
+    background-color: #45a049;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    font-size: 14px;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr.yellow {
+    background-color: #ffffcc;
+}
+
+tr.orange {
+    background-color: #ffcc99;
+}
+
+tr.red {
+    background-color: #ff9999;
+}
+
+#productDetails {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+@media (max-width: 600px) {
+    body {
+        margin: 10px;
+        padding: 5px;
+    }
+    
+    form input, form select, form textarea {
+        font-size: 14px;
     }
 
-    function addProductToDatabase(product) {
-        const products = loadDatabase();
-        products.push(product);
-        saveDatabase(products);
+    th, td {
+        font-size: 12px;
     }
+}
 
-    function loadDatabase() {
-        const data = localStorage.getItem('products');
-        return data ? JSON.parse(data) : [];
-    }
-
-    function saveDatabase(products) {
-        localStorage.setItem('products', JSON.stringify(products));
-    }
-
-    function displayProductInTable(product) {
-        const expiryDate = new Date(product.expiryDate);
-        const today = new Date();
-        const timeDiff = expiryDate - today;
-        const daysToExpiry = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-        const row = productTable.insertRow();
-        row.insertCell(0).textContent = product.productCode;
-        row.insertCell(1).textContent = product.supplier;
-        row.insertCell(2).textContent = product.productName;
-        row.insertCell(3).textContent = product.quantity;
-        row.insertCell(4).textContent = product.expiryDate;
-        row.insertCell(5).textContent = daysToExpiry;
-        row.insertCell(6).textContent = product.returnable;
-        row.insertCell(7).textContent = product.returnConditions;
-
-        const actionsCell = row.insertCell(8);
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Eliminar';
-        deleteButton.addEventListener('click', function() {
-            deleteProductFromDatabase(product.productCode);
-            productTable.deleteRow(row.rowIndex - 1);
-        });
-        actionsCell.appendChild(deleteButton);
-
-        if (daysToExpiry <= 7) {
-            row.classList.add('urgent');
-        } else if (daysToExpiry <= 14) {
-            row.classList.add('danger');
-        } else if (daysToExpiry <= 30) {
-            row.classList.add('warning');
-        }
-    }
-
-    function deleteProductFromDatabase(productCode) {
-        let products = loadDatabase();
-        products = products.filter(product => product.productCode !== productCode);
-        saveDatabase(products);
-    }
-
-    function displayAllProducts() {
-        const products = loadDatabase();
-        products.forEach(displayProductInTable);
-    }
-
-    document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function(event) {
-            const column = event.target.dataset.column;
-            const isChecked = event.target.checked;
-            toggleColumnVisibility(column, isChecked);
-        });
-    });
-
-    function toggleColumnVisibility(columnIndex, isVisible) {
-        const table = document.getElementById('productTable');
-        const rows = table.rows;
-        for (let row of rows) {
-            const cell = row.cells[columnIndex];
-            if (cell) {
-                cell.style.display = isVisible ? '' : 'none';
-            }
-        }
-    }
-
-    displayAllProducts();
-
-    // Set initial column visibility based on checkbox state
-    document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
-        const column = checkbox.dataset.column;
-        const isChecked = checkbox.checked;
-        toggleColumnVisibility(column, isChecked);
-    });
-});
