@@ -44,7 +44,7 @@ button {
     flex: 1 1 100%;
     padding: 10px;
     font-size: 16px;
-    background-color: #4CAF50;
+    background-color: #2196F3; /* Cambiado a azul */
     color: white;
     border: none;
     cursor: pointer;
@@ -52,39 +52,44 @@ button {
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #1976D2; /* Azul más oscuro para hover */
+}
+
+#productTableContainer {
+    margin-top: 20px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-th, td {
+td {
     border: 1px solid #ddd;
     padding: 12px;
     text-align: center;
     font-size: 14px;
+    position: relative;
 }
 
-th {
-    background-color: #f2f2f2;
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
 }
 
 tr.yellow {
-    background-color: #ffffcc;
-}
-
-tr.orange {
-    background-color: #ffcc99;
+    background-color: #ffeb3b;
 }
 
 tr.red {
-    background-color: #ff9999;
+    background-color: #f44336;
 }
 
 .delete-btn {
@@ -94,6 +99,10 @@ tr.red {
     padding: 5px 10px;
     cursor: pointer;
     border-radius: 5px;
+    margin-left: 10px;
+    margin-top: 10px;
+    position: absolute;
+    right: -60px;
 }
 
 #productDetails {
@@ -103,6 +112,7 @@ tr.red {
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid #ddd;
     border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 600px) {
@@ -115,8 +125,16 @@ tr.red {
         font-size: 14px;
     }
 
-    th, td {
+    td {
         font-size: 12px;
+    }
+
+    .delete-btn {
+        position: static;
+        margin-left: 0;
+        display: block;
+        width: 100%;
+        text-align: center;
     }
 }
 
