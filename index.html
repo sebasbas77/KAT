@@ -182,7 +182,10 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', loadProducts);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            console.log("Products loaded from local storage.");
+        });
 
         document.getElementById('productForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -209,6 +212,7 @@
             saveProduct(product);
 
             document.getElementById('productForm').reset();
+            console.log("Product added and saved to local storage.");
         });
 
         function getRowClass(daysLeft) {
@@ -240,6 +244,7 @@
             localStorage.setItem('products', JSON.stringify(products));
             document.getElementById('productTable').getElementsByTagName('tbody')[0].innerHTML = '';
             loadProducts();
+            console.log(`Product with code ${codigo} deleted from local storage.`);
         }
 
         function addProductToTable(product) {
