@@ -1,4 +1,8 @@
 body {
+    background-image: url('fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     font-family: Arial, sans-serif;
     margin: 20px;
     padding: 10px;
@@ -105,3 +109,4 @@ tr.red {
         font-size: 12px;
     }
 }
+
