@@ -115,7 +115,7 @@
     </style>
 </head>
 <body>
-    <h1>Control de Productos</h1>
+    <h1>Control de Caducidad de Productos</h1>
     <form id="productForm">
         <div class="form-group">
             <label for="codigo">Código:</label>
@@ -134,7 +134,7 @@
             <input type="number" id="cantidad" name="cantidad" required>
         </div>
         <div class="form-group">
-            <label for="fecha">Fecha:</label>
+            <label for="fecha">Fecha de Caducidad:</label>
             <input type="date" id="fecha" name="fecha" required>
         </div>
         <div class="form-group">
@@ -232,20 +232,11 @@
 
             newRow.classList.add(getRowClass(daysLeft));
 
-            newRow.addEventListener('click', function() {
-                const details = document.getElementById('productDetails');
-                if (details.style.display === 'none' || details.style.display === '') {
-                    document.getElementById('detailCodigo').innerText = product.codigo;
-                    document.getElementById('detailProducto').innerText = product.producto;
-                    document.getElementById('detailProveedor').innerText = product.proveedor;
-                    document.getElementById('detailCantidad').innerText = product.cantidad;
-                    document.getElementById('detailFecha').innerText = product.fecha;
-                    document.getElementById('detailDevolucion').innerText = product.devolucion;
-                    document.getElementById('detailCondiciones').innerText = product.condiciones;
-
-                    details.style.display = 'block';
-                } else {
-                    details.style.display = 'none';
+            Array.from(newRow.cells).forEach((cell, index) => {
+                if (index < newRow.cells.length - 1) {
+                    cell.addEventListener('click', function() {
+                        showProductDetails(product);
+                    });
                 }
             });
         }
@@ -258,6 +249,19 @@
             } else {
                 return '';
             }
+        }
+
+        function showProductDetails(product) {
+            const details = document.getElementById('productDetails');
+            document.getElementById('detailCodigo').innerText = product.codigo;
+            document.getElementById('detailProducto').innerText = product.producto;
+            document.getElementById('detailProveedor').innerText = product.proveedor;
+            document.getElementById('detailCantidad').innerText = product.cantidad;
+            document.getElementById('detailFecha').innerText = product.fecha;
+            document.getElementById('detailDevolucion').innerText = product.devolucion;
+            document.getElementById('detailCondiciones').innerText = product.condiciones;
+
+            details.style.display = 'block';
         }
 
         function saveProductToLocalStorage(product) {
@@ -282,4 +286,3 @@
     </script>
 </body>
 </html>
-
